@@ -1,0 +1,28 @@
+# Define the completion function
+_cyberpower-pdu() {
+  local -a words
+  local curcontext="$curcontext" state line
+
+  _arguments \
+    ': :_known_hosts_real' \
+    '1: :->command' \
+    '2: :->outlet' \
+    '*:: :->options'
+
+  case $state in
+    (command)
+      _arguments '1:on:->on' '1:off:->off' '1:reboot:->reboot' '1:cancel:->cancel'
+      ;;
+    (outlet)
+      local outlets
+      outlets=($(cyberpower-pdu $words[2]))
+      _describe 'outlet' outlets
+      ;;
+    (options)
+      _arguments '*:: :->ignored'
+      ;;
+  esac
+}
+
+# Register the completion function for cyberpower-pdu command
+compdef _cyberpower-pdu cyberpower-pdu

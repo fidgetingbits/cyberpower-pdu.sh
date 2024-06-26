@@ -1,0 +1,25 @@
+function _cyberpower-pdu
+  set -l prev (commandline -P -t)
+  set -l cur (commandline -C)
+  set -l cword (commandline -C --count)
+
+  switch $cword
+    case 1
+      # Complete the command itself
+      complete --command cyberpower-pdu --arguments '(
+        "on" "off" "reboot" "cancel"
+      )'
+    case 2
+      # Complete outlets based on the first argument (command)
+      set -l outlets (cyberpower-pdu $prev)
+      for out in $outlets
+        complete --command cyberpower-pdu --arguments $out
+      end
+    case 3
+      # No completions beyond this point
+      return
+  end
+end
+
+# Invoke the completion function
+complete -f -n '__fish_use_subcommand' -c cyberpower-pdu -a '(_cyberpower-pdu)'
